@@ -48,7 +48,7 @@ class VieApp {
         const gatewayRes = await fetch('/health/gateway');
         const gatewayData = await gatewayRes.json();
         
-        if (gatewayData.connected) {
+        if (gatewayData.gateway && gatewayData.gateway.connected) {
           this.updateStatus('⟢ Ready to help ⟢');
         } else {
           this.updateStatus('⚠️ Gateway offline - limited functionality');

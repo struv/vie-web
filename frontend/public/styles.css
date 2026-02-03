@@ -37,38 +37,141 @@ body {
   flex-direction: column;
 }
 
-/* Avatar Container */
+/* Avatar Container - Enhanced with procedural animation */
 .avatar-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: 2rem 1rem;
   background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
 }
 
-.avatar {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  line-height: 1.2;
-  color: var(--accent-gold);
-  white-space: pre;
-  text-align: center;
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
-  animation: breathe 4s ease-in-out infinite;
+.avatar-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1;
 }
 
-/* Breathing animation for avatar */
-@keyframes breathe {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
+.avatar-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.avatar-ascii {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-symbol {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 300;
+  color: var(--breath-color, var(--accent-purple));
+  animation: symbolPulse 4s ease-in-out infinite;
+  transform: scale(var(--breath-scale, 1)) rotate(calc(var(--breath-scale, 1) * 5deg));
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 0 30px currentColor);
+}
+
+.avatar-core {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.core-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--breath-color, var(--accent-purple));
+  border-radius: 50%;
+  opacity: 0;
+  animation: ringExpand 3s ease-out infinite;
+}
+
+.core-ring:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.core-ring:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.core-ring:nth-child(3) {
+  animation-delay: 2s;
+}
+
+@keyframes symbolPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 40px currentColor;
+  }
+  50% {
+    text-shadow:
+      0 0 20px currentColor,
+      0 0 40px currentColor,
+      0 0 80px currentColor,
+      0 0 120px currentColor;
+  }
+}
+
+@keyframes ringExpand {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 160px;
+    height: 160px;
+    opacity: 0;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .avatar-container {
+    padding: 1rem 0.5rem;
+    min-height: 250px;
+  }
+  
+  .avatar-wrapper {
+    max-width: 300px;
+  }
+  
+  .avatar-symbol {
+    font-size: clamp(2rem, 12vw, 4rem);
+  }
 }
 
 .status-line {
   text-align: center;
   font-size: 0.9rem;
   color: var(--accent-gold);
-  margin-top: 1rem;
+  padding: 0.5rem 1rem 1rem;
   font-style: italic;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
 }
 
 /* Chat Area */

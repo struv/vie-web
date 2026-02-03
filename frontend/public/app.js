@@ -1,23 +1,11 @@
 // Vie Web Frontend - Main App (Vanilla JS)
 // Ported from Vie Desktop, Electron IPC replaced with backend API calls
 
-const ASCII_AVATAR = `        ▓▓▓
-       ▓▓▓▓▓
-    ▒▒▓▓▓▓▓▓▓▒▒
-   ▒▒▒▓▓▓⟢▓▓▓▒▒▒
-  ▒▒░░▓▓▓▓▓▓▓░░▒▒
-  ▒░░  ▓▓▓▓▓  ░░▒
-   ░    ▓▓▓    ░
-        ╱ ╲
-       ╱   ╲
-      ⟨  ⟢  ⟩
-       ╲   ╱
-        ╲ ╱`;
-
 class VieApp {
   constructor() {
     this.messages = [];
     this.isTyping = false;
+    this.avatar = null;
     
     // Backend API configuration
     this.API_BASE = '/api'; // Proxied through same origin
@@ -32,6 +20,9 @@ class VieApp {
   async init() {
     // Render initial UI
     this.render();
+    
+    // Initialize procedural avatar
+    this.initAvatar();
     
     // Set up event listeners
     this.setupEventListeners();
@@ -71,16 +62,21 @@ class VieApp {
       statusLine.textContent = text;
     }
   }
+  
+  initAvatar() {
+    const container = document.querySelector('.avatar-container');
+    if (container && window.VieAvatar) {
+      this.avatar = new window.VieAvatar(container);
+    }
+  }
 
   render() {
     const root = document.getElementById('root');
     root.innerHTML = `
       <div class="avatar-container">
-        <div>
-          <pre class="avatar">${ASCII_AVATAR}</pre>
-          <div class="status-line">⟢ Connecting... ⟢</div>
-        </div>
+        <!-- Avatar will be dynamically created by VieAvatar -->
       </div>
+      <div class="status-line">⟢ Connecting... ⟢</div>
       
       <div class="chat-container">
         <div class="messages" id="messages">

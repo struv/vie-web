@@ -51,21 +51,76 @@ OpenClaw Gateway (Port 18789)
 - [ ] Test from Windows browser (external access)
 - [ ] Session management testing (avoid conflicts with Discord session)
 
-**Phase 3 (Voice):**
-- [ ] Voice input (Web Speech API)
-- [ ] Voice output (TTS)
+**Phase 3 (Voice Interface):**
+- ✅ Voice input with Web Speech API
+- ✅ Push-to-talk microphone button
+- ✅ Visual feedback (pulse animations)
+- ✅ Live transcription display
+- ✅ Text-to-speech output (browser synthesis)
+- ✅ TTS toggle control
+- ✅ Speaking indicator
+- ✅ Error handling and graceful degradation
 - [ ] Streaming responses (SSE)
-- [ ] Waveform visualization
+- [ ] Advanced voice settings panel (optional)
 
-**Phase 3 (Voice):**
-- [ ] Voice input (Web Speech API)
-- [ ] Voice output (TTS)
-- [ ] Streaming responses
-- [ ] Waveform visualization
+## Voice Interface
+
+**New in Phase 3!** Talk to Vie using your voice.
+
+### Features
+
+**Voice Input (Push-to-Talk):**
+- Hold the microphone button to speak
+- Release to send your message
+- See live transcription as you speak
+- Visual pulse animation while listening
+- Automatic sending when you finish
+
+**Voice Output (Text-to-Speech):**
+- Toggle TTS on/off with speaker button
+- Vie reads responses aloud automatically (when enabled)
+- Visual indicator shows when speaking
+- Uses browser's built-in speech synthesis
+
+**Browser Support:**
+- ✅ **Best:** Chrome, Edge (full Web Speech API support)
+- ⚠️ **Partial:** Safari (limited voice selection)
+- ❌ **Not supported:** Firefox (no Web Speech Recognition)
+
+**Fallback:** If voice isn't supported, text input works as normal.
+
+### How to Use
+
+1. **Open the app** in Chrome or Edge: `http://localhost:3000`
+2. **Allow microphone access** when prompted
+3. **Hold the microphone button** 🎤 and speak
+4. **Release** when done - your message sends automatically
+5. **Toggle TTS** 🔊 to hear Vie's responses aloud
+
+### Files
+
+- `frontend/public/voice.js` - Voice interface module (isolated)
+- Voice controls integrated in chat UI
+- CSS animations in `styles.css`
+
+### Known Limitations
+
+- **Chrome/Edge only** for voice input (Web Speech API)
+- Microphone permission required
+- Depends on browser's built-in voices (quality varies)
+- Network required for speech recognition
+
+### Future Enhancements
+
+- Advanced TTS (ElevenLabs, OpenAI) - higher quality voices
+- Voice settings panel (speed, pitch, volume control)
+- Voice selection (choose from available voices)
+- Waveform visualization
+- Streaming response support
 
 ## Quick Start
 
-### Backend Only (Current)
+### Full App (Backend + Frontend)
 
 ```bash
 cd /home/opc/.openclaw/vie-web/backend

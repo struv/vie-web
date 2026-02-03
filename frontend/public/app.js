@@ -6,6 +6,7 @@ class VieApp {
     this.messages = [];
     this.isTyping = false;
     this.avatar = null;
+    this.voice = null;
     
     // Backend API configuration
     this.API_BASE = '/api'; // Proxied through same origin
@@ -23,6 +24,9 @@ class VieApp {
     
     // Initialize procedural avatar
     this.initAvatar();
+    
+    // Initialize voice interface
+    this.initVoice();
     
     // Set up event listeners
     this.setupEventListeners();
@@ -67,6 +71,22 @@ class VieApp {
     const container = document.querySelector('.avatar-container');
     if (container && window.VieAvatar) {
       this.avatar = new window.VieAvatar(container);
+    }
+  }
+
+  initVoice() {
+    if (window.VieVoice) {
+      this.voice = new window.VieVoice(this);
+      
+      // Render voice controls
+      const inputContainer = document.querySelector('.input-container');
+      if (inputContainer) {
+        const voiceControlsHTML = this.voice.renderControls();
+        inputContainer.insertAdjacentHTML('beforebegin', voiceControlsHTML);
+        
+        // Attach event listeners
+        this.voice.attachEventListeners();
+      }
     }
   }
 
@@ -182,6 +202,11 @@ class VieApp {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     
     this.messages.push({ role, content, timestamp: Date.now() });
+    
+    // Speak assistant messages if TTS is enabled
+    if (role === 'assistant' && this.voice) {
+      this.voice.speak(content);
+    }
   }
 
   setTyping(typing) {

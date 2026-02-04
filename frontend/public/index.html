@@ -3,13 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vie ⟢</title>
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="Vie - AI assistant from the void">
+  <title>vie</title>
+  <!-- OPTIMIZED: Preload critical CSS -->
+  <link rel="preload" href="styles.css" as="style">
   <link rel="stylesheet" href="styles.css">
+  <!-- OPTIMIZED: Preconnect to API endpoint -->
+  <link rel="preconnect" href="/api">
 </head>
 <body>
   <div id="root"></div>
-  <script src="avatar.js"></script>
-  <script src="voice.js"></script>
-  <script src="app.js"></script>
+  <!-- OPTIMIZED: Load scripts with defer for non-blocking rendering -->
+  <!-- Scripts execute in order after DOM is ready -->
+  <script defer src="avatar.js"></script>
+  <script defer src="voice.js"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>

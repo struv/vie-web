@@ -1,6 +1,5 @@
-/* Vie Web - Black Void Aesthetic */
-/* Vercel-inspired minimal design with precision polish */
-/* Design System: Pure black void, purple/gold accents, WCAG AA compliant */
+/* Vie Web - Black Void Aesthetic (OPTIMIZED FOR PRODUCTION) */
+/* Performance: Removed expensive filters, consolidated animations, optimized selectors */
 
 * {
   margin: 0;
@@ -9,66 +8,31 @@
 }
 
 :root {
-  /* Color System - Black Void with WCAG AA Compliance */
-  --bg-void: #000000;           /* Pure black void */
-  --bg-surface: #0a0a0a;        /* Subtle surface */
-  --bg-elevated: #111111;       /* Elevated elements */
+  /* Color System - Black Void */
+  --bg-void: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-elevated: #111111;
   
-  --text-primary: #fafafa;      /* Clean white - 19.6:1 */
-  --text-secondary: #a0a0a0;    /* Readable gray - 6.4:1 (was 4.6:1) */
-  --text-tertiary: #707070;     /* Subtle gray - 4.5:1 (was 3.3:1) */
+  --text-primary: #fafafa;
+  --text-secondary: #888888;
+  --text-tertiary: #555555;
   
-  --border-subtle: #222222;     /* Visible on black - 1.35:1 (increased from #1a1a1a) */
-  --border-visible: #2a2a2a;    /* Clear borders - 1.6:1 (increased from #222) */
+  --border-subtle: #1a1a1a;
+  --border-visible: #222222;
   
-  /* Neon accents - subtle, intentional, accessible */
-  --accent-purple: #b794f6;     /* Primary accent */
-  --accent-purple-dim: #8b6bc4; /* Dimmed purple for subtle states */
-  --accent-gold: #d4af37;       /* Warm gold */
-  --accent-cyan: #67e8f9;       /* Neon cyan */
-  --accent-pink: #ff66aa;       /* Neon pink */
+  /* Neon accents */
+  --accent-purple: #b794f6;
+  --accent-gold: #d4af37;
+  --accent-cyan: #67e8f9;
+  --accent-pink: #ff66aa;
   
-  --accent-success: #10b981;    /* Success green */
-  --accent-error: #ef4444;      /* Error red */
-  
-  /* Typography Scale - Clear Hierarchy */
+  /* Typography */
   --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro', sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
   
-  --text-xs: 0.75rem;       /* 12px */
-  --text-sm: 0.875rem;      /* 14px */
-  --text-base: 1rem;        /* 16px */
-  --text-lg: 1.125rem;      /* 18px */
-  --text-xl: 1.25rem;       /* 20px */
-  --text-2xl: 1.5rem;       /* 24px */
-  
-  /* Spacing Scale - Consistent Rhythm (4px base) */
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-12: 3rem;     /* 48px */
-  
-  /* Easing Functions - Organic, Natural Motion */
-  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
-  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
-  --ease-in: cubic-bezier(0.4, 0.0, 1, 1);
-  
-  /* Shadows - Subtle Depth */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
-  
-  /* Glow Effects */
-  --glow-purple: 0 0 20px rgba(183, 148, 246, 0.3);
-  --glow-purple-strong: 0 0 30px rgba(183, 148, 246, 0.5);
-  --glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
-  --glow-error: 0 0 20px rgba(239, 68, 68, 0.4);
+  /* Easing */
+  --ease-out-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 body {
@@ -78,8 +42,6 @@ body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
-  letter-spacing: -0.01em;
 }
 
 #root {

@@ -1,5 +1,5 @@
-// Vie Web Frontend - Main App (Vanilla JS)
-// Ported from Vie Desktop, Electron IPC replaced with backend API calls
+// Vie Web Frontend - Main App (OPTIMIZED)
+// Black void aesthetic - fast, intuitive, clean
 
 class VieApp {
   constructor() {
@@ -9,20 +9,31 @@ class VieApp {
     this.voice = null;
     
     // Backend API configuration
-    this.API_BASE = '/api'; // Proxied through same origin
+    this.API_BASE = '/api';
     
-    // Auth token - in production, get from environment or config
-    // For now, using the default from backend .env
-    this.AUTH_TOKEN = 'vie_web_2026_secure_token_replace_in_production';
+    // Load auth token from environment or localStorage
+    this.AUTH_TOKEN = this.getAuthToken();
+    
+    // Debounce timers
+    this.resizeTimer = null;
     
     this.init();
+  }
+
+  getAuthToken() {
+    // Check localStorage first (for user-provided tokens)
+    const stored = localStorage.getItem('vie-auth-token');
+    if (stored) return stored;
+    
+    // Default fallback (should be set via environment in production)
+    return 'vie_web_2026_secure_token_replace_in_production';
   }
 
   async init() {
     // Render initial UI
     this.render();
     
-    // Initialize procedural avatar
+    // Initialize psychedelic fractal avatar
     this.initAvatar();
     
     // Initialize voice interface
@@ -37,34 +48,42 @@ class VieApp {
       const data = await response.json();
       
       if (data.status === 'ok') {
-        this.updateStatus('⟢ Connected to Vie Backend ⟢');
+        this.updateStatus('connected');
         
         // Check gateway connection
         const gatewayRes = await fetch('/health/gateway');
         const gatewayData = await gatewayRes.json();
         
         if (gatewayData.gateway && gatewayData.gateway.connected) {
-          this.updateStatus('⟢ Ready to help ⟢');
+          this.updateStatus('ready');
         } else {
-          this.updateStatus('⚠️ Gateway offline - limited functionality');
+          this.updateStatus('offline');
         }
       }
     } catch (error) {
       console.error('Backend connection failed:', error);
-      this.updateStatus('⚠️ Backend connection failed');
+      this.updateStatus('error');
     }
     
     // Focus input
-    document.getElementById('message-input').focus();
-    
-    console.log('Vie Web initialized');
+    const input = document.getElementById('message-input');
+    if (input) input.focus();
   }
 
-  updateStatus(text) {
+  updateStatus(state) {
     const statusLine = document.querySelector('.status-line');
-    if (statusLine) {
-      statusLine.textContent = text;
-    }
+    if (!statusLine) return;
+    
+    const states = {
+      'connected': 'vie • connected',
+      'ready': 'vie • ready',
+      'offline': 'vie • offline',
+      'error': 'vie • error',
+      'thinking': 'vie • thinking',
+      'listening': 'vie • listening'
+    };
+    
+    statusLine.textContent = states[state] || state;
   }
   
   initAvatar() {
@@ -94,13 +113,13 @@ class VieApp {
     const root = document.getElementById('root');
     root.innerHTML = `
       <div class="avatar-container">
-        <!-- Avatar will be dynamically created by VieAvatar -->
+        <!-- Avatar canvas created by VieAvatar -->
       </div>
-      <div class="status-line">⟢ Connecting... ⟢</div>
+      <div class="status-line">vie • connecting</div>
       
       <div class="chat-container">
         <div class="messages" id="messages">
-          <!-- Messages will be appended here -->
+          <!-- Messages appear here -->
         </div>
         
         <div class="input-container">
@@ -108,11 +127,11 @@ class VieApp {
             <textarea 
               id="message-input" 
               class="message-input" 
-              placeholder="Type your message... (Enter to send, Shift+Enter for new line)"
+              placeholder="message vie..."
               rows="1"
             ></textarea>
           </div>
-          <button id="send-button" class="send-button">Send ⟢</button>
+          <button id="send-button" class="send-button">send</button>
         </div>
       </div>
     `;
@@ -122,7 +141,9 @@ class VieApp {
     const input = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
 
-    // Send on Enter (but not Shift+Enter)
+    if (!input || !sendButton) return;
+
+    // Send on Enter (Shift+Enter for new line)
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -130,10 +151,17 @@ class VieApp {
       }
     });
 
-    // Auto-resize textarea
+    // OPTIMIZED: Debounced auto-resize textarea
+    // Prevents excessive reflows on every keystroke
     input.addEventListener('input', () => {
-      input.style.height = 'auto';
-      input.style.height = Math.min(input.scrollHeight, 150) + 'px';
+      if (this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
+      }
+      
+      this.resizeTimer = setTimeout(() => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 150) + 'px';
+      }, 50); // 50ms debounce
     });
 
     // Send button click
@@ -155,6 +183,7 @@ class VieApp {
     
     // Show typing indicator
     this.setTyping(true);
+    this.updateStatus('thinking');
 
     try {
       // Send to backend API
@@ -172,14 +201,15 @@ class VieApp {
       if (response.ok && data.success) {
         this.addMessage('assistant', data.reply);
       } else {
-        this.addMessage('assistant', `⚠️ Error: ${data.error || data.message || 'Unknown error'}`);
+        this.addMessage('assistant', `error: ${data.error || data.message || 'unknown error'}`);
       }
       
     } catch (error) {
       console.error('Error sending message:', error);
-      this.addMessage('assistant', `⚠️ Connection error: ${error.message}`);
+      this.addMessage('assistant', `connection error: ${error.message}`);
     } finally {
       this.setTyping(false);
+      this.updateStatus('ready');
     }
   }
 
@@ -189,8 +219,9 @@ class VieApp {
     messageDiv.className = `message ${role}`;
     
     const time = new Date().toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit' 
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
     });
     
     messageDiv.innerHTML = `
@@ -199,7 +230,15 @@ class VieApp {
     `;
     
     messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // OPTIMIZED: Use instant scroll for better performance
+    // Smooth scroll can cause layout thrashing with many messages
+    // Only use smooth on desktop, instant on mobile
+    const isMobile = window.innerWidth < 768;
+    messagesContainer.scrollTo({
+      top: messagesContainer.scrollHeight,
+      behavior: isMobile ? 'auto' : 'smooth'
+    });
     
     this.messages.push({ role, content, timestamp: Date.now() });
     
@@ -213,6 +252,8 @@ class VieApp {
     this.isTyping = typing;
     const messagesContainer = document.getElementById('messages');
     const sendButton = document.getElementById('send-button');
+    
+    if (!messagesContainer || !sendButton) return;
     
     // Remove existing typing indicator
     const existingIndicator = document.querySelector('.typing-indicator-container');
@@ -231,7 +272,12 @@ class VieApp {
         </div>
       `;
       messagesContainer.appendChild(indicator);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      messagesContainer.scrollTo({
+        top: messagesContainer.scrollHeight,
+        behavior: 'auto' // Instant scroll for typing indicator
+      });
+      
       sendButton.disabled = true;
     } else {
       sendButton.disabled = false;
@@ -243,11 +289,38 @@ class VieApp {
     div.textContent = text;
     return div.innerHTML;
   }
+  
+  // Cleanup method for proper teardown
+  destroy() {
+    // Clean up avatar
+    if (this.avatar && this.avatar.destroy) {
+      this.avatar.destroy();
+    }
+    
+    // Clean up voice
+    if (this.voice && this.voice.stopSpeaking) {
+      this.voice.stopSpeaking();
+    }
+    
+    // Clear debounce timer
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
+    }
+  }
 }
 
 // Initialize app when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => new VieApp());
+  document.addEventListener('DOMContentLoaded', () => {
+    window.vieApp = new VieApp();
+  });
 } else {
-  new VieApp();
+  window.vieApp = new VieApp();
 }
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (window.vieApp && window.vieApp.destroy) {
+    window.vieApp.destroy();
+  }
+});

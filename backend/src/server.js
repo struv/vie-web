@@ -8,6 +8,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const path = require('path');
 
 // Services
@@ -20,6 +21,7 @@ const createRateLimiter = require('./middleware/rateLimit');
 // Routes
 const healthRoutes = require('./routes/health');
 const chatRoutes = require('./routes/chat');
+const ttsRoutes = require('./routes/tts');
 
 // Initialize Express app
 const app = express();
@@ -42,6 +44,18 @@ const corsOptions = {
 
 // Middleware stack
 app.use(cors(corsOptions));
+
+// OPTIMIZED: Enable gzip/brotli compression for all responses
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6 // Balance between speed and compression ratio
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -53,9 +67,24 @@ app.use('/health', healthRoutes);
 
 // API routes (auth required)
 app.use('/api/chat', authMiddleware, chatRoutes);
+app.use('/api/tts', authMiddleware, ttsRoutes);
 
-// Serve frontend static files (will add in Phase 2)
-app.use(express.static(path.join(__dirname, '../../frontend/public')));
+// OPTIMIZED: Serve frontend static files with aggressive caching
+app.use(express.static(path.join(__dirname, '../../frontend/public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '1y' : '0', // 1 year cache in production
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    // Cache JS/CSS aggressively, HTML not at all
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else if (filePath.match(/\.(js|css)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (filePath.match(/\.(jpg|jpeg|png|gif|svg|webp|ico)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000'); // 30 days
+    }
+  }
+}));
 
 // Fallback route for SPA (serve index.html for any unmatched route)
 app.get('*', (req, res) => {
@@ -93,6 +122,8 @@ app.listen(PORT, async () => {
   console.log(`  GET  /health/gateway      - Gateway connection status`);
   console.log(`  POST /api/chat/send       - Send message to Clawd`);
   console.log(`  POST /api/chat/stream     - Stream message (SSE)`);
+  console.log(`  GET  /api/tts/voices      - List available TTS voices`);
+  console.log(`  POST /api/tts/elevenlabs  - Generate speech with ElevenLabs`);
   console.log('');
 
   // Test gateway connection on startup
